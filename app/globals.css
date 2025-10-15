@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  --bg: #fff9f6;
+  --card: #ffffff;
+}
+
+html,body,#root{
+  height:100%;
+}
+
+body{
+  @apply bg-[var(--bg)] text-gray-800 antialiased;
+}
+
+.card{
+  @apply bg-[var(--card)] rounded-lg shadow-sm p-4;
+}
+
+.navbar{
+  @apply bg-white/80 backdrop-blur-sm border-b border-gray-100;
+}
