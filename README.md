@@ -1,24 +1,25 @@
 # 🍽️ Sistema de Comanda Digital
 
-Prototipo funcional de un sistema de comanda digital para restaurantes construido con **Next.js 14 (App Router)**, **TypeScript**, **TailwindCSS** y **Zustand**.
+Sistema de comanda digital para restaurantes en la nube, construido con **Next.js 14 (App Router)**, **TypeScript**, **Firebase/Firestore** y **Zustand**.
 
 ## 🚀 Características
 
+- **Backend en la nube**: Toda la data en Firebase Firestore (sin necesidad de servidor propio)
+- **Multi-dispositivo**: Acceso desde cualquier celular/tablet con internet
+- **Tiempo real nativo**: Sincronización instantánea con `onSnapshot` de Firebase
 - **Autenticación simulada** con tres roles: Mesero, Cocina y Admin
 - **Vista Mesero**: Navegar menú por categorías, agregar items al pedido y enviar pedidos
 - **Vista Cocina**: Ver pedidos en tiempo real y actualizar su estado (pendiente → preparando → listo)
 - **Vista Admin**: Gestión de productos del menú
 - **Estado global** manejado con Zustand
-- **Simulación de tiempo real** entre cocina y mesero
 - **Sistema de notificaciones** automáticas
-- **Sincronización automática** cada 10 segundos
-- **Datos mock** sin necesidad de backend
-- **Diseño responsive** con tonos cálidos
+- **Diseño responsive** con tonos cálidos optimizado para móviles
 
 ## 📦 Tecnologías
 
 - Next.js 14 (App Router)
 - TypeScript
+- Firebase 12.4.0 (Firestore Database)
 - TailwindCSS
 - Zustand (estado global)
 - React 18
@@ -26,11 +27,29 @@ Prototipo funcional de un sistema de comanda digital para restaurantes construid
 ## 🛠️ Instalación
 
 ```bash
-# Instalar dependencias
+# 1. Instalar dependencias
 npm install
+# o si usas bun:
+bun install
 
-# Ejecutar en modo desarrollo
+# 2. Configurar variables de entorno
+# Crea un archivo .env en la raíz con tus credenciales de Firebase:
+NEXT_PUBLIC_FIREBASE_API_KEY=tu_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu_proyecto_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
+
+# 3. Poblar la base de datos con datos iniciales
+npm run seed:firebase
+# o:
+bun run seed:firebase
+
+# 4. Ejecutar en modo desarrollo
 npm run dev
+# o:
+bun dev
 ```
 
 Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
@@ -67,16 +86,40 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
 /store
  ├─ useUserStore.ts     # Store de usuario (con logout)
- ├─ useMenuStore.ts     # Store del menú
- └─ usePedidosStore.ts  # Store de pedidos + notificaciones + sincronización
+ ├─ useMenuStore.ts     # Store del menú (lectura desde Firestore)
+ └─ usePedidosStore.ts  # Store de pedidos (escritura/lectura Firestore)
 
 /hooks
- └─ useRealtimeSync.ts  # Hook para simulación de tiempo real
+ └─ useRealtimeSync.ts  # Hook para sincronización en tiempo real con Firebase
+
+/lib
+ └─ firebase.ts         # Inicialización de Firebase (Firestore + Auth)
+
+/scripts
+ └─ seedFirebase.ts     # Script para poblar Firestore con datos iniciales
 
 /mock
- ├─ users.ts            # Usuarios mock
- ├─ menuData.ts         # Menú mock
- └─ pedidosData.ts      # Pedidos mock
+ ├─ users.ts            # Usuarios mock (para autenticación simulada)
+ └─ menuData.ts         # Datos base para seed de Firestore
+```
+
+## ⚡ Tiempo Real con Firebase
+
+El sistema utiliza **Firebase Firestore con sincronización en tiempo real nativa**:
+
+### Características de Tiempo Real:
+
+1. **Hook `useRealtimeSync`**: Escucha cambios con `onSnapshot` de Firebase
+2. **Notificaciones push**: Alertas automáticas cuando pedidos cambian de estado
+3. **Sincronización instantánea**: Cambios visibles en tiempo real entre dispositivos
+4. **Multi-dispositivo**: Funciona en múltiples celulares/tablets simultáneamente
+
+### Flujo de Estados:
+```
+Pendiente → Preparando → Listo
+```
+
+### Eventos con Notificaciones:
 ```
 
 ## � Simulación de Tiempo Real
@@ -103,11 +146,38 @@ Pendiente → Preparando → Listo
 
 ### Cómo Probarlo:
 
-1. Abre 2 ventanas del navegador lado a lado
-2. Login en una como mesero (`mesero@local.com`), otra como cocina (`cocina@local.com`)
-3. Envía un pedido desde mesero
+1. Abre la app en 2 dispositivos diferentes (ej: celular y tablet) o 2 ventanas del navegador
+2. Login en uno como mesero (`mesero@local.com`), otro como cocina (`cocina@local.com`)
+3. Envía un pedido desde el mesero
 4. Cambia su estado desde cocina
-5. ¡Observa las notificaciones y sincronización en tiempo real!
+5. ¡Observa las notificaciones y sincronización instantánea entre dispositivos!
+
+### Arquitectura Firebase:
+
+```
+Firestore Database
+├─ menu/                    # Colección de items del menú
+│  └─ [itemId]
+│     ├─ name: string
+│     ├─ category: string
+│     ├─ price: number
+│     ├─ description: string
+│     ├─ imageUrl: string
+│     └─ active: boolean
+│
+└─ pedidos/                 # Colección de pedidos
+   └─ [pedidoId]
+      ├─ mesa: number
+      ├─ mesero: string
+      ├─ status: string
+      ├─ total: number
+      ├─ timestamp: Timestamp
+      └─ items: array
+         ├─ id: string
+         ├─ name: string
+         ├─ quantity: number
+         └─ price: number
+```
 
 ## �💡 Funcionalidades por Rol
 
@@ -152,58 +222,91 @@ Cada producto incluye: nombre, precio, descripción e imagen de ejemplo.
 
 ## 📝 Notas Técnicas
 
-Este es un **prototipo funcional** con sincronización real entre pestañas usando **localStorage**:
+Sistema **en producción** usando **Firebase/Firestore** como backend en la nube:
 
-- ✅ Los datos **persisten** en localStorage (se mantienen al recargar)
-- ✅ La sincronización en tiempo real funciona entre **múltiples pestañas**
-- ✅ Usa **Storage Event API** del navegador para detectar cambios
-- ✅ Las notificaciones se generan localmente y se muestran en tiempo real
-- ✅ **Puedes abrir mesero y cocina simultáneamente** y ver los cambios
+- ✅ Los datos **persisten** en Firestore (base de datos en la nube)
+- ✅ La sincronización funciona entre **múltiples dispositivos** en tiempo real
+- ✅ Usa **onSnapshot** de Firebase para detectar cambios automáticamente
+- ✅ Las notificaciones se generan en tiempo real con cada cambio
+- ✅ **Acceso desde cualquier celular/tablet** con conexión a internet
+- ✅ Sin necesidad de servidor propio (serverless)
 
 ### 🔧 Tecnología de Sincronización:
 
 ```typescript
-// Zustand con persist middleware
-import { persist, createJSONStorage } from 'zustand/middleware'
+// Store de Pedidos con Firebase
+import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
-export const usePedidosStore = create<PedidosStore>()(
-  persist(
-    (set, get) => ({
-      pedidos: [],
-      // ... rest of state
-    }),
-    {
-      name: 'comanda-storage',
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-)
+export const usePedidosStore = create<PedidosStore>((set, get) => ({
+  pedidos: [],
+  
+  // Enviar pedido a Firestore
+  submitOrder: async (mesa: number, items: CartItem[]) => {
+    const pedidoData = {
+      mesa,
+      mesero: currentUser.name,
+      status: "pendiente",
+      items: items,
+      total: calculateTotal(items),
+      timestamp: serverTimestamp(),
+    };
+    
+    await addDoc(collection(db, "pedidos"), pedidoData);
+  },
+  
+  // Actualizar estado en Firestore
+  updateItemStatus: async (pedidoId: string, status: string) => {
+    await updateDoc(doc(db, "pedidos", pedidoId), { status });
+  },
+}));
 
-// Hook de sincronización
+// Hook de sincronización en tiempo real
 useEffect(() => {
-  // Detecta cambios en otras pestañas
-  window.addEventListener('storage', handleStorageChange)
+  const q = query(collection(db, "pedidos"), orderBy("timestamp", "desc"));
   
-  // Polling para misma pestaña (1 segundo)
-  const interval = setInterval(checkUpdates, 1000)
+  // Escuchar cambios en tiempo real
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const pedidosActualizados = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    setPedidos(pedidosActualizados);
+  });
   
-  return () => {
-    window.removeEventListener('storage', handleStorageChange)
-    clearInterval(interval)
-  }
-}, [])
+  return () => unsubscribe();
+}, []);
 ```
 
-### Para Producción se Recomienda:
+### 🔒 Configuración de Firebase:
 
-- ✅ Implementar autenticación real (NextAuth, JWT)
-- ✅ Backend con API REST o GraphQL
-- ✅ Base de datos (PostgreSQL + Prisma, MongoDB)
-- ✅ **WebSockets** (Socket.io) o **Server-Sent Events** para multi-dispositivo
-- ✅ Validaciones y manejo de errores robusto
-- ✅ Testing (Jest, React Testing Library)
-- ✅ Optimizaciones de rendimiento
-- ✅ Rate limiting y seguridad
+1. Crear proyecto en [Firebase Console](https://console.firebase.google.com)
+2. Habilitar **Firestore Database**
+3. Configurar reglas de seguridad (modo prueba para desarrollo):
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true; // Solo para desarrollo
+    }
+  }
+}
+```
+4. Copiar credenciales al archivo `.env`
+5. Ejecutar seed para poblar datos iniciales: `npm run seed:firebase`
+
+### 🚀 Mejoras Futuras Recomendadas:
+
+- ⏳ Implementar autenticación real con Firebase Auth
+- ⏳ Reglas de seguridad de Firestore por roles
+- ⏳ Paginación en queries de pedidos
+- ⏳ Índices compuestos en Firestore para queries complejas
+- ⏳ Cloud Functions para lógica de negocio (cálculos, validaciones)
+- ⏳ Testing (Jest, React Testing Library, Firebase Emulator)
+- ⏳ PWA para instalación en dispositivos móviles
+- ⏳ Modo offline con Firestore offline persistence
 
 ## 📄 Licencia
 
