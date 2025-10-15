@@ -37,8 +37,13 @@ export default function MeseroPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    // Cargar el menú desde la API
-    fetchMenu();
+    // Cargar el menú desde Firebase
+    console.log("🔍 Cargando menú desde Firebase...");
+    fetchMenu().then(() => {
+      console.log("✅ Menú cargado:", categories.length, "categorías");
+    }).catch((error) => {
+      console.error("❌ Error al cargar menú:", error);
+    });
   }, [fetchMenu]);
 
   const currentCategory = categories.find((c) => c.name === activeCategory);
