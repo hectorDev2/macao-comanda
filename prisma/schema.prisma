@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Modelo de Pedidos
+model Pedido {
+  id        Int          @id @default(autoincrement())
+  mesa      String       // Número de mesa
+  timestamp DateTime     @default(now())
+  estado    String       @default("activo") // activo, completado, cancelado
+  items     PedidoItem[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([mesa])
+  @@index([estado])
+}
+
+// Modelo de Items de Pedidos
+model PedidoItem {
+  id        Int      @id @default(autoincrement())
+  pedidoId  Int
+  pedido    Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  menuItemId Int     // ID del item del menú
+  name      String   // Nombre del plato
+  quantity  Int      // Cantidad
+  price     Float    // Precio unitario
+  estado    String   @default("pendiente") // pendiente, preparando, listo, entregado
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pedidoId])
+  @@index([estado])
+}
+
+// Modelo de Items del Menú
+model MenuItem {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category    String   // Entradas, Platos Principales, Postres, Bebidas
+  price       Float
+  imageUrl    String?
+  description String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([active])
+}
+
+// Modelo de Usuarios (opcional, para autenticación)
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String   // En producción usar bcrypt
+  name      String
+  role      String   // mesero, cocina, admin
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([username])
+  @@index([role])
+}
