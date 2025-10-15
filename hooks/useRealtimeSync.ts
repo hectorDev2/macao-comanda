@@ -23,18 +23,23 @@ export function useRealtimeSync() {
       q,
       (querySnapshot) => {
         const pedidos: Pedido[] = [];
-        
+
         querySnapshot.forEach((doc) => {
           const data = doc.data();
           pedidos.push({
             id: parseInt(doc.id) || Date.now(),
             mesa: data.mesa,
             items: data.items || [],
-            timestamp: data.timestamp?.toDate?.()?.toISOString() || new Date().toISOString(),
+            timestamp:
+              data.timestamp?.toDate?.()?.toISOString() ||
+              new Date().toISOString(),
           });
         });
 
-        console.log("📡 Actualización en tiempo real - Pedidos:", pedidos.length);
+        console.log(
+          "📡 Actualización en tiempo real - Pedidos:",
+          pedidos.length
+        );
 
         // Actualizar el store con los nuevos datos
         usePedidosStore.setState({
