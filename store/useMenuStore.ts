@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { MenuCategory } from "@/mock/menuData";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface MenuStore {
   categories: MenuCategory[];
@@ -14,12 +16,24 @@ export const useMenuStore = create<MenuStore>((set) => ({
   error: null,
 
   fetchMenu: async () => {
+    console.log("📡 useMenuStore.fetchMenu() - Iniciando...");
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch("/api/menu");
-      if (!response.ok) throw new Error("Error al cargar el menú");
+      const menuRef = collection(db, "menu");
+      console.log("📡 Obteniendo todos los documentos...");
+      
+      // Simplificado: obtener todos los documentos sin filtros complejos
+      const querySnapshot = await getDocs(menuRef);
+      console.log("📡 Documentos recibidos:", querySnapshot.size);
 
-      const data = await response.json();
+      const data: any[] = [];
+      querySnapshot.forEach((doc) => {
+        const docData = { id: doc.id, ...doc.data() };
+        console.log("📄 Doc:", docData);
+        data.push(docData);
+      });
+
+      console.log("📊 Total items:", data.length);
 
       // Agrupar items por categoría
       const categoriesMap = new Map<string, any[]>();
@@ -28,7 +42,7 @@ export const useMenuStore = create<MenuStore>((set) => ({
           categoriesMap.set(item.category, []);
         }
         categoriesMap.get(item.category)!.push({
-          id: item.id,
+          id: item.id || Date.now(),
           name: item.name,
           price: item.price,
           image: item.imageUrl || "/placeholder.png",
@@ -41,8 +55,10 @@ export const useMenuStore = create<MenuStore>((set) => ({
         categoriesMap.entries()
       ).map(([name, items]) => ({ name, items }));
 
+      console.log("✅ Categorías creadas:", categories.length, categories.map(c => `${c.name} (${c.items.length} items)`));
       set({ categories, isLoading: false });
     } catch (error) {
+      console.error("❌ Error al cargar menú:", error);
       set({ error: (error as Error).message, isLoading: false });
     }
   },
