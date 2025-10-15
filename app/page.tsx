@@ -24,28 +24,44 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-8 card">
-      <h1 className="text-2xl font-semibold mb-4">Iniciar sesión</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <input
-          className="border p-2 rounded"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          className="border p-2 rounded"
-          placeholder="Contraseña"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button className="bg-warm-500 text-white py-2 rounded">Entrar</button>
-        {error && <div className="text-red-500">{error}</div>}
-      </form>
-      <div className="mt-4 text-sm text-gray-600">
-        Usuarios de prueba: mesero@local.com / cocina@local.com /
-        admin@local.com (password 1234)
+    <div className="min-h-[calc(100vh-120px)] flex items-center justify-center px-4">
+      <div className="w-full max-w-md card">
+        <h1 className="text-2xl sm:text-3xl font-semibold mb-6 text-center">
+          Iniciar sesión
+        </h1>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            className="border-2 p-3 sm:p-4 rounded-lg text-base focus:border-warm-500 focus:outline-none transition-colors"
+            placeholder="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            className="border-2 p-3 sm:p-4 rounded-lg text-base focus:border-warm-500 focus:outline-none transition-colors"
+            placeholder="Contraseña"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button className="bg-warm-500 hover:bg-warm-600 text-white py-3 sm:py-4 rounded-lg font-semibold text-lg transition-colors active:scale-95 transform">
+            Entrar
+          </button>
+          {error && (
+            <div className="text-red-600 bg-red-50 p-3 rounded-lg text-center font-medium">
+              {error}
+            </div>
+          )}
+        </form>
+        <div className="mt-6 p-4 bg-gray-50 rounded-lg text-sm text-gray-600">
+          <p className="font-semibold mb-2">Usuarios de prueba:</p>
+          <ul className="space-y-1 text-xs sm:text-sm">
+            <li>• mesero@local.com</li>
+            <li>• cocina@local.com</li>
+            <li>• admin@local.com</li>
+            <li className="text-gray-500 mt-2">Password: 1234</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

@@ -30,15 +30,15 @@ export default function PedidoItemCard({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-warm-500 hover:shadow-lg transition-shadow">
-      <div className="flex justify-between items-start mb-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-warm-600">
+    <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 border-l-4 border-warm-500 hover:shadow-lg transition-shadow">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xl sm:text-2xl font-bold text-warm-600">
               Mesa {mesa}
             </span>
             <span
-              className={`px-2 py-1 rounded-full text-xs font-semibold ${
+              className={`px-2 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
                 item.estado === "pendiente"
                   ? "bg-yellow-100 text-yellow-700"
                   : item.estado === "preparando"
@@ -67,12 +67,12 @@ export default function PedidoItemCard({
         </div>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-3 sm:mb-4">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-lg font-bold text-gray-800">
+          <span className="text-lg sm:text-xl font-bold text-gray-800">
             {item.quantity}×
           </span>
-          <span className="text-lg font-semibold text-gray-900">
+          <span className="text-base sm:text-lg font-semibold text-gray-900 truncate">
             {item.name}
           </span>
         </div>
@@ -83,7 +83,7 @@ export default function PedidoItemCard({
         {item.estado === "pendiente" && (
           <button
             onClick={() => onUpdateStatus(pedidoId, item.id, "preparando")}
-            className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition font-semibold"
+            className="flex-1 bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 active:bg-blue-700 transition font-semibold text-sm sm:text-base active:scale-95 transform"
           >
             🔥 Iniciar Preparación
           </button>
@@ -92,7 +92,7 @@ export default function PedidoItemCard({
         {item.estado === "preparando" && (
           <button
             onClick={() => onUpdateStatus(pedidoId, item.id, "listo")}
-            className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition font-semibold"
+            className="flex-1 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 active:bg-green-700 transition font-semibold text-sm sm:text-base active:scale-95 transform"
           >
             ✓ Marcar como Listo
           </button>
@@ -101,7 +101,7 @@ export default function PedidoItemCard({
         {item.estado === "listo" && (
           <button
             onClick={handleConfirmEntrega}
-            className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition font-semibold"
+            className="flex-1 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 active:bg-green-800 transition font-semibold text-sm sm:text-base active:scale-95 transform"
           >
             ✓ Pedido Entregado
           </button>

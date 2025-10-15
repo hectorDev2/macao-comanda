@@ -5,7 +5,14 @@ import NotificationCenter from "@/components/NotificationCenter";
 
 export const metadata = {
   title: "Sistema de Comanda Digital",
-  description: "Prototipo de comanda digital con Next.js, Tailwind y Zustand",
+  description: "Sistema de comanda digital en la nube con Firebase y tiempo real",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
+  themeColor: "#f97316",
 };
 
 export default function RootLayout({
@@ -15,10 +22,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
+      <head>
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      </head>
       <body>
         <Navbar />
         <NotificationCenter />
-        <main className="max-w-7xl mx-auto px-4 py-6">{children}</main>
+        <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+          {children}
+        </main>
       </body>
     </html>
   );

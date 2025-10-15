@@ -52,22 +52,21 @@ export default function MeseroPage() {
 
   if (!isMounted) {
     return (
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <h1 className="text-2xl font-semibold mb-4">Vista Mesero</h1>
-          <div className="flex justify-center items-center h-64">
-            <div className="text-gray-500">Cargando...</div>
-          </div>
+      <div>
+        <h1 className="text-xl sm:text-2xl font-semibold mb-4">Vista Mesero</h1>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-gray-500">Cargando...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex gap-4">
-      <div className="flex-1">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-semibold">Vista Mesero</h1>
+    <div className="flex flex-col lg:flex-row gap-4">
+      {/* Contenido principal */}
+      <div className="flex-1 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <h1 className="text-xl sm:text-2xl font-semibold">Vista Mesero</h1>
           <AlertaPedidosListos />
         </div>
         <PedidosStatusBar />
@@ -76,12 +75,14 @@ export default function MeseroPage() {
           active={activeCategory}
           onSelect={setActiveCategory}
         />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-4 pb-24 lg:pb-4">
           {currentCategory?.items.map((item) => (
             <MenuItemCard key={item.id} item={item} />
           ))}
         </div>
       </div>
+      
+      {/* Sidebar - Fixed en móvil, static en desktop */}
       <SidebarPedido />
     </div>
   );

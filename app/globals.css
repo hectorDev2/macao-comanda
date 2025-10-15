@@ -16,9 +16,47 @@ body{
 }
 
 .card{
-  @apply bg-[var(--card)] rounded-lg shadow-sm p-4;
+  @apply bg-[var(--card)] rounded-lg shadow-sm p-3 sm:p-4;
 }
 
 .navbar{
   @apply bg-white/80 backdrop-blur-sm border-b border-gray-100;
+}
+
+/* Ocultar scrollbar pero mantener funcionalidad */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Animaciones para modales */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mejorar el tap en móviles */
+@media (max-width: 1024px) {
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+  }
 }

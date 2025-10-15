@@ -10,16 +10,19 @@ const PendientesColumn = React.memo(() => {
   const updateItemStatus = usePedidosStore((state) => state.updateItemStatus);
 
   return (
-    <div className="bg-yellow-50 rounded-xl p-6 border-2 border-yellow-200">
-      <h2 className="text-2xl font-bold text-yellow-700 mb-4 flex items-center justify-between">
-        <span>⏳ Pendientes</span>
-        <span className="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full text-lg">
+    <div className="bg-yellow-50 rounded-xl p-3 sm:p-4 lg:p-6 border-2 border-yellow-200">
+      <h2 className="text-xl sm:text-2xl font-bold text-yellow-700 mb-3 sm:mb-4 flex items-center justify-between gap-2">
+        <span className="flex items-center gap-1.5 sm:gap-2">
+          <span className="text-lg sm:text-2xl">⏳</span>
+          <span className="truncate">Pendientes</span>
+        </span>
+        <span className="bg-yellow-200 text-yellow-800 px-2.5 sm:px-3 py-1 rounded-full text-base sm:text-lg shrink-0">
           {itemsPendientes.length}
         </span>
       </h2>
-      <div className="space-y-4">
+      <div className="space-y-2 sm:space-y-3 lg:space-y-4">
         {itemsPendientes.length === 0 ? (
-          <p className="text-yellow-600 text-center py-8">No hay items pendientes</p>
+          <p className="text-yellow-600 text-center py-6 sm:py-8 text-sm sm:text-base">No hay items pendientes</p>
         ) : (
           itemsPendientes.map(({ pedido, item }) => (
             <PedidoItemCard
@@ -45,16 +48,19 @@ const PreparandoColumn = React.memo(() => {
   const updateItemStatus = usePedidosStore((state) => state.updateItemStatus);
 
   return (
-    <div className="bg-blue-50 rounded-xl p-6 border-2 border-blue-200">
-      <h2 className="text-2xl font-bold text-blue-700 mb-4 flex items-center justify-between">
-        <span>🔥 En Preparación</span>
-        <span className="bg-blue-200 text-blue-800 px-3 py-1 rounded-full text-lg">
+    <div className="bg-blue-50 rounded-xl p-3 sm:p-4 lg:p-6 border-2 border-blue-200">
+      <h2 className="text-xl sm:text-2xl font-bold text-blue-700 mb-3 sm:mb-4 flex items-center justify-between gap-2">
+        <span className="flex items-center gap-1.5 sm:gap-2">
+          <span className="text-lg sm:text-2xl">🔥</span>
+          <span className="truncate">En Preparación</span>
+        </span>
+        <span className="bg-blue-200 text-blue-800 px-2.5 sm:px-3 py-1 rounded-full text-base sm:text-lg shrink-0">
           {itemsPreparando.length}
         </span>
       </h2>
-      <div className="space-y-4">
+      <div className="space-y-2 sm:space-y-3 lg:space-y-4">
         {itemsPreparando.length === 0 ? (
-          <p className="text-blue-600 text-center py-8">No hay items en preparación</p>
+          <p className="text-blue-600 text-center py-6 sm:py-8 text-sm sm:text-base">No hay items en preparación</p>
         ) : (
           itemsPreparando.map(({ pedido, item }) => (
             <PedidoItemCard
@@ -77,19 +83,22 @@ PreparandoColumn.displayName = 'PreparandoColumn';
 // Componente para la columna de items listos
 const ListosColumn = React.memo(() => {
   const itemsListos = usePedidosStore((state) => state.getItemsByEstado("listo"));
-  const updateItemStatus = usePedidosStore((state) => state.updateItemStatus);
+  const updateItemStatus = usePedidosStore ((state) => state.updateItemStatus);
 
   return (
-    <div className="bg-green-50 rounded-xl p-6 border-2 border-green-200">
-      <h2 className="text-2xl font-bold text-green-700 mb-4 flex items-center justify-between">
-        <span>✅ Listos para Servir</span>
-        <span className="bg-green-200 text-green-800 px-3 py-1 rounded-full text-lg">
+    <div className="bg-green-50 rounded-xl p-3 sm:p-4 lg:p-6 border-2 border-green-200">
+      <h2 className="text-xl sm:text-2xl font-bold text-green-700 mb-3 sm:mb-4 flex items-center justify-between gap-2">
+        <span className="flex items-center gap-1.5 sm:gap-2">
+          <span className="text-lg sm:text-2xl">✅</span>
+          <span className="truncate">Listos</span>
+        </span>
+        <span className="bg-green-200 text-green-800 px-2.5 sm:px-3 py-1 rounded-full text-base sm:text-lg shrink-0">
           {itemsListos.length}
         </span>
       </h2>
-      <div className="space-y-4">
+      <div className="space-y-2 sm:space-y-3 lg:space-y-4">
         {itemsListos.length === 0 ? (
-          <p className="text-green-600 text-center py-8">No hay items listos</p>
+          <p className="text-green-600 text-center py-6 sm:py-8 text-sm sm:text-base">No hay items listos</p>
         ) : (
           itemsListos.map(({ pedido, item }) => (
             <PedidoItemCard
@@ -133,13 +142,13 @@ export default function CocinaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 -m-3 sm:-m-4 p-3 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8 flex items-center gap-3">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-4 sm:mb-8 flex items-center gap-2 sm:gap-3">
           👨‍🍳 <span>Panel de Cocina</span>
         </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           <PendientesColumn />
           <PreparandoColumn />
           <ListosColumn />

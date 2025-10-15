@@ -8,6 +8,7 @@ export interface PedidoItem {
 
 export interface Pedido {
   id: number;
+  firebaseId?: string; // ID del documento en Firebase
   mesa: string;
   items: PedidoItem[];
   timestamp: string;

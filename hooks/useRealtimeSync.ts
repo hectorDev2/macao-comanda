@@ -26,8 +26,14 @@ export function useRealtimeSync() {
 
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+          // Generar un ID numérico único basado en el ID de Firebase
+          const hashId = doc.id.split('').reduce((acc, char) => {
+            return ((acc << 5) - acc) + char.charCodeAt(0);
+          }, 0);
+          
           pedidos.push({
-            id: parseInt(doc.id) || Date.now(),
+            id: Math.abs(hashId), // Usar valor absoluto para evitar IDs negativos
+            firebaseId: doc.id, // Guardar el ID original de Firebase
             mesa: data.mesa,
             items: data.items || [],
             timestamp:

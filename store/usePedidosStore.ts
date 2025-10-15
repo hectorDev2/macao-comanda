@@ -145,19 +145,13 @@ export const usePedidosStore = create<PedidosStore>()((set, get) => ({
         timestamp: Timestamp.now(),
       };
 
+      // Agregar el pedido a Firebase
       await addDoc(collection(db, "pedidos"), newPedido);
 
-      const pedidoCreado: Pedido = {
-        id: Date.now(),
-        mesa,
-        items: newPedido.items,
-        timestamp: new Date().toISOString(),
-      };
-
+      // Solo limpiar el carrito y actualizar estado
+      // El listener de Firebase (onSnapshot) se encargará de agregar el pedido a la lista
       set({
-        pedidos: [pedidoCreado, ...get().pedidos],
         currentCart: [],
-        lastUpdate: Date.now(),
         isLoading: false,
       });
 
@@ -175,66 +169,45 @@ export const usePedidosStore = create<PedidosStore>()((set, get) => ({
     }
   },
 
-  // Actualizar estado de un item en Firebase
+    // Actualizar estado de un item en Firebase
   updateItemStatus: async (
     pedidoId: number,
     itemId: number,
     estado: string
   ) => {
     const pedido = get().pedidos.find((p: Pedido) => p.id === pedidoId);
-    if (!pedido) return;
+    if (!pedido) {
+      console.error("❌ Pedido no encontrado:", pedidoId);
+      return;
+    }
 
     const item = pedido.items.find((i: PedidoItem) => i.id === itemId);
-    if (!item) return;
+    if (!item) {
+      console.error("❌ Item no encontrado:", itemId);
+      return;
+    }
+
+    // Usar el firebaseId si está disponible
+    if (!pedido.firebaseId) {
+      console.error("❌ No se encontró el ID de Firebase para el pedido");
+      return;
+    }
 
     set({ isLoading: true, error: null });
     try {
-      // Buscar el documento en Firebase por mesa y timestamp
-      const pedidosRef = collection(db, "pedidos");
-      const querySnapshot = await getDocs(pedidosRef);
+      // Usar directamente el firebaseId del pedido
+      const docRef = doc(db, "pedidos", pedido.firebaseId);
+      const updatedItems = pedido.items.map((i: PedidoItem) =>
+        i.id === itemId ? { ...i, estado } : i
+      );
 
-      let docId: string | null = null;
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.mesa === pedido.mesa) {
-          docId = doc.id;
-        }
+      await updateDoc(docRef, {
+        items: updatedItems,
       });
 
-      if (docId) {
-        // Actualizar el item en el array
-        const docRef = doc(db, "pedidos", docId);
-        const updatedItems = pedido.items.map((i: PedidoItem) =>
-          i.id === itemId ? { ...i, estado } : i
-        );
-
-        await updateDoc(docRef, {
-          items: updatedItems,
-        });
-      }
-
-      // Actualizar localmente
+      // Solo actualizar el estado de loading
+      // El listener de Firebase (onSnapshot) se encargará de actualizar los datos
       set({
-        pedidos: get().pedidos.map((p: Pedido) =>
-          p.id === pedidoId
-            ? {
-                ...p,
-                items: p.items.map((i: PedidoItem) =>
-                  i.id === itemId
-                    ? {
-                        ...i,
-                        estado: estado as
-                          | "pendiente"
-                          | "preparando"
-                          | "listo"
-                          | "entregado",
-                      }
-                    : i
-                ),
-              }
-            : p
-        ),
-        lastUpdate: Date.now(),
         isLoading: false,
       });
 
@@ -261,6 +234,7 @@ export const usePedidosStore = create<PedidosStore>()((set, get) => ({
         }
       }
     } catch (error) {
+      console.error("❌ Error al actualizar item:", error);
       set({ error: (error as Error).message, isLoading: false });
       get().addNotification(
         `❌ Error al actualizar estado: ${(error as Error).message}`,
