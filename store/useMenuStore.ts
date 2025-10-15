@@ -21,7 +21,7 @@ export const useMenuStore = create<MenuStore>((set) => ({
     try {
       const menuRef = collection(db, "menu");
       console.log("📡 Obteniendo todos los documentos...");
-      
+
       // Simplificado: obtener todos los documentos sin filtros complejos
       const querySnapshot = await getDocs(menuRef);
       console.log("📡 Documentos recibidos:", querySnapshot.size);
@@ -55,7 +55,11 @@ export const useMenuStore = create<MenuStore>((set) => ({
         categoriesMap.entries()
       ).map(([name, items]) => ({ name, items }));
 
-      console.log("✅ Categorías creadas:", categories.length, categories.map(c => `${c.name} (${c.items.length} items)`));
+      console.log(
+        "✅ Categorías creadas:",
+        categories.length,
+        categories.map((c) => `${c.name} (${c.items.length} items)`)
+      );
       set({ categories, isLoading: false });
     } catch (error) {
       console.error("❌ Error al cargar menú:", error);

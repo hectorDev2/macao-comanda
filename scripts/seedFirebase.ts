@@ -3,13 +3,13 @@
  * Ejecutar con: npm run seed:firebase
  */
 
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
-import { menuCategories } from '../mock/menuData';
-import * as dotenv from 'dotenv';
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { menuCategories } from "../mock/menuData";
+import * as dotenv from "dotenv";
 
 // Cargar variables de entorno
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: ".env.local" });
 dotenv.config();
 
 const firebaseConfig = {
@@ -31,12 +31,12 @@ async function seedFirebase() {
     // Verificar si ya existen datos
     const menuRef = collection(db, "menu");
     const existing = await getDocs(menuRef);
-    
+
     if (!existing.empty) {
       console.log("⚠️  Ya existen datos en la colección 'menu'");
       console.log(`   Encontrados: ${existing.size} items\n`);
-      
-      const answer = process.argv.includes('--force');
+
+      const answer = process.argv.includes("--force");
       if (!answer) {
         console.log("❌ Seed cancelado. Usa --force para sobrescribir");
         process.exit(0);

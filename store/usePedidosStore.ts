@@ -1,6 +1,17 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 import { Pedido, PedidoItem } from "@/mock/pedidosData";
+import { 
+  collection, 
+  addDoc, 
+  getDocs, 
+  updateDoc, 
+  doc, 
+  query, 
+  orderBy,
+  onSnapshot,
+  Timestamp
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface CartItem {
   id: number;
@@ -57,9 +68,7 @@ interface PedidosStore {
   ) => Array<{ pedido: Pedido; item: PedidoItem }>;
 }
 
-export const usePedidosStore = create<PedidosStore>()(
-  persist(
-    (set, get) => ({
+export const usePedidosStore = create<PedidosStore>()((set, get) => ({
       pedidos: [],
       currentCart: [],
       notifications: [],
@@ -89,47 +98,62 @@ export const usePedidosStore = create<PedidosStore>()(
         set({ currentCart: [] });
       },
 
-      // Obtener todos los pedidos desde la API
+      // Obtener todos los pedidos desde Firebase
       fetchPedidos: async () => {
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch("/api/pedidos");
-          if (!response.ok) throw new Error("Error al obtener pedidos");
+          const pedidosRef = collection(db, "pedidos");
+          const q = query(pedidosRef, orderBy("timestamp", "desc"));
+          const querySnapshot = await getDocs(q);
 
-          const pedidos = await response.json();
+          const pedidos: Pedido[] = [];
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            pedidos.push({
+              id: parseInt(doc.id) || Date.now(),
+              mesa: data.mesa,
+              items: data.items || [],
+              timestamp: data.timestamp?.toDate?.()?.toISOString() || new Date().toISOString(),
+            });
+          });
+
           set({ pedidos, lastUpdate: Date.now(), isLoading: false });
         } catch (error) {
+          console.error("Error al obtener pedidos:", error);
           set({ error: (error as Error).message, isLoading: false });
         }
       },
 
-      // Enviar pedido a la API
+      // Enviar pedido a Firebase
       submitOrder: async (mesa) => {
         const cart = get().currentCart;
         if (cart.length === 0) return;
 
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch("/api/pedidos", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              mesa,
-              items: cart.map((item) => ({
-                menuItemId: item.id,
-                quantity: item.quantity,
-                price: item.price,
-                name: item.name,
-              })),
-            }),
-          });
+          const newPedido = {
+            mesa,
+            items: cart.map((item) => ({
+              id: item.id,
+              name: item.name,
+              quantity: item.quantity,
+              price: item.price,
+              estado: "pendiente" as const,
+            })),
+            timestamp: Timestamp.now(),
+          };
 
-          if (!response.ok) throw new Error("Error al crear pedido");
+          await addDoc(collection(db, "pedidos"), newPedido);
 
-          const newPedido = await response.json();
+          const pedidoCreado: Pedido = {
+            id: Date.now(),
+            mesa,
+            items: newPedido.items,
+            timestamp: new Date().toISOString(),
+          };
 
           set({
-            pedidos: [...get().pedidos, newPedido],
+            pedidos: [pedidoCreado, ...get().pedidos],
             currentCart: [],
             lastUpdate: Date.now(),
             isLoading: false,
@@ -140,6 +164,7 @@ export const usePedidosStore = create<PedidosStore>()(
             "info"
           );
         } catch (error) {
+          console.error("Error al crear pedido:", error);
           set({ error: (error as Error).message, isLoading: false });
           get().addNotification(
             `❌ Error al enviar pedido: ${(error as Error).message}`,
@@ -148,35 +173,48 @@ export const usePedidosStore = create<PedidosStore>()(
         }
       },
 
-      // Actualizar estado de un item en la API
-      updateItemStatus: async (pedidoId, itemId, estado) => {
-        const pedido = get().pedidos.find((p) => p.id === pedidoId);
+      // Actualizar estado de un item en Firebase
+      updateItemStatus: async (pedidoId: number, itemId: number, estado: string) => {
+        const pedido = get().pedidos.find((p: Pedido) => p.id === pedidoId);
         if (!pedido) return;
 
-        const item = pedido.items.find((i) => i.id === itemId);
+        const item = pedido.items.find((i: PedidoItem) => i.id === itemId);
         if (!item) return;
 
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch(
-            `/api/pedidos/${pedidoId}/items/${itemId}`,
-            {
-              method: "PATCH",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ estado }),
+          // Buscar el documento en Firebase por mesa y timestamp
+          const pedidosRef = collection(db, "pedidos");
+          const querySnapshot = await getDocs(pedidosRef);
+          
+          let docId: string | null = null;
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.mesa === pedido.mesa) {
+              docId = doc.id;
             }
-          );
+          });
 
-          if (!response.ok) throw new Error("Error al actualizar estado");
+          if (docId) {
+            // Actualizar el item en el array
+            const docRef = doc(db, "pedidos", docId);
+            const updatedItems = pedido.items.map((i: PedidoItem) =>
+              i.id === itemId ? { ...i, estado } : i
+            );
+            
+            await updateDoc(docRef, {
+              items: updatedItems
+            });
+          }
 
           // Actualizar localmente
           set({
-            pedidos: get().pedidos.map((p) =>
+            pedidos: get().pedidos.map((p: Pedido) =>
               p.id === pedidoId
                 ? {
                     ...p,
-                    items: p.items.map((i) =>
-                      i.id === itemId ? { ...i, estado } : i
+                    items: p.items.map((i: PedidoItem) =>
+                      i.id === itemId ? { ...i, estado: estado as "pendiente" | "preparando" | "listo" | "entregado" } : i
                     ),
                   }
                 : p
@@ -271,10 +309,5 @@ export const usePedidosStore = create<PedidosStore>()(
         });
         return result;
       },
-    }),
-    {
-      name: "comanda-storage",
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
+    })
 );
