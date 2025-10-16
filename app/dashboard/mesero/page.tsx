@@ -18,9 +18,14 @@ const AlertaPedidosListos = React.memo(() => {
   if (pedidosListos === 0) return null;
 
   return (
-    <div className="px-4 py-2 bg-green-100 text-green-800 rounded-lg font-medium animate-pulse">
-      🔔 {pedidosListos} pedido{pedidosListos > 1 ? "s" : ""} listo
-      {pedidosListos > 1 ? "s" : ""} para servir
+    <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-green-100 to-green-200 border-2 border-green-300 text-green-800 rounded-lg font-semibold shadow-md animate-pulse">
+      <div className="flex items-center gap-2 justify-center sm:justify-start">
+        <span className="text-xl sm:text-2xl">🔔</span>
+        <span className="text-sm sm:text-base">
+          {pedidosListos} pedido{pedidosListos > 1 ? "s" : ""} listo
+          {pedidosListos > 1 ? "s" : ""} para servir
+        </span>
+      </div>
     </div>
   );
 });
@@ -52,7 +57,7 @@ export default function MeseroPage() {
 
   if (!isMounted) {
     return (
-      <div>
+      <div className="p-3 sm:p-4">
         <h1 className="text-xl sm:text-2xl font-semibold mb-4">Vista Mesero</h1>
         <div className="flex justify-center items-center h-64">
           <div className="text-gray-500">Cargando...</div>
@@ -62,28 +67,91 @@ export default function MeseroPage() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4">
-      {/* Contenido principal */}
-      <div className="flex-1 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-          <h1 className="text-xl sm:text-2xl font-semibold">Vista Mesero</h1>
-          <AlertaPedidosListos />
-        </div>
-        <PedidosStatusBar />
-        <CategoryTabs
-          categories={categories.map((c) => c.name)}
-          active={activeCategory}
-          onSelect={setActiveCategory}
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mt-4 pb-24 lg:pb-4">
-          {currentCategory?.items.map((item) => (
-            <MenuItemCard key={item.id} item={item} />
-          ))}
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-yellow-50">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 p-3 sm:p-4 lg:p-6 max-w-[1920px] mx-auto">
+        {/* Contenido principal */}
+        <div className="flex-1 min-w-0">
+          {/* Header con título y alerta */}
+          <div className="flex flex-col gap-3 mb-4 sm:mb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center text-2xl sm:text-3xl shadow-lg">
+                👨‍🍳
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">
+                  Vista Mesero
+                </h1>
+                <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
+                  Gestiona los pedidos de las mesas
+                </p>
+              </div>
+            </div>
+            <AlertaPedidosListos />
+          </div>
 
-      {/* Sidebar - Fixed en móvil, static en desktop */}
-      <SidebarPedido />
+          {/* Barra de estado de pedidos */}
+          <div className="mb-4 sm:mb-5">
+            <PedidosStatusBar />
+          </div>
+
+          {/* Tabs de categorías - Scroll horizontal en móvil */}
+          <div className="mb-4 sm:mb-5">
+            <h2 className="text-sm font-semibold text-gray-600 mb-2 px-1">
+              📋 Categorías del Menú
+            </h2>
+            <CategoryTabs
+              categories={categories.map((c) => c.name)}
+              active={activeCategory}
+              onSelect={setActiveCategory}
+            />
+          </div>
+
+          {/* Grid de items del menú */}
+          {currentCategory ? (
+            <>
+              <div className="flex items-center justify-between mb-3 px-1">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-800">
+                  {currentCategory.name}
+                </h3>
+                <span className="text-xs sm:text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                  {currentCategory.items.length} items
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 pb-24 lg:pb-6">
+                {currentCategory.items.length === 0 ? (
+                  <div className="col-span-full">
+                    <div className="bg-white rounded-2xl shadow-sm border-2 border-dashed border-gray-300 p-8 sm:p-12 text-center">
+                      <div className="text-5xl sm:text-6xl mb-4">🍽️</div>
+                      <p className="text-lg sm:text-xl font-semibold text-gray-600 mb-2">
+                        No hay items disponibles
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Esta categoría está vacía por el momento
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  currentCategory.items.map((item) => (
+                    <MenuItemCard key={item.id} item={item} />
+                  ))
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="col-span-full">
+              <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-200 p-8 sm:p-12 text-center">
+                <div className="text-5xl sm:text-6xl mb-4">🍴</div>
+                <p className="text-lg sm:text-xl font-semibold text-gray-600">
+                  Cargando menú...
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar - Fixed en móvil, static en desktop */}
+        <SidebarPedido />
+      </div>
     </div>
   );
 }
