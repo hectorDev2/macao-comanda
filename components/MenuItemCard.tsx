@@ -23,8 +23,12 @@ export default function MenuItemCard({ item }: Props) {
           priority={false}
         />
       </div>
-      <h3 className="font-semibold text-base sm:text-lg mb-1 truncate">{item.name}</h3>
-      <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+      <h3 className="font-semibold text-base sm:text-lg mb-1 truncate">
+        {item.name}
+      </h3>
+      <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2">
+        {item.description}
+      </p>
       <div className="flex justify-between items-center gap-2">
         <span className="text-warm-600 font-bold text-lg sm:text-xl whitespace-nowrap">
           S/ {item.price.toFixed(2)}

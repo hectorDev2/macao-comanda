@@ -62,7 +62,9 @@ export default function PedidosStatusBar() {
             <div className="text-xl sm:text-2xl font-bold text-yellow-700">
               {itemsPendientes.length}
             </div>
-            <div className="text-[10px] sm:text-xs text-yellow-600 mt-0.5 sm:mt-1">Pendientes</div>
+            <div className="text-[10px] sm:text-xs text-yellow-600 mt-0.5 sm:mt-1">
+              Pendientes
+            </div>
           </button>
 
           <button
@@ -72,7 +74,9 @@ export default function PedidosStatusBar() {
             <div className="text-xl sm:text-2xl font-bold text-blue-700">
               {itemsPreparando.length}
             </div>
-            <div className="text-[10px] sm:text-xs text-blue-600 mt-0.5 sm:mt-1">En Cocina</div>
+            <div className="text-[10px] sm:text-xs text-blue-600 mt-0.5 sm:mt-1">
+              En Cocina
+            </div>
           </button>
 
           <button
@@ -82,12 +86,16 @@ export default function PedidosStatusBar() {
             <div className="text-xl sm:text-2xl font-bold text-green-700">
               {itemsListos.length}
             </div>
-            <div className="text-[10px] sm:text-xs text-green-600 mt-0.5 sm:mt-1">Listos</div>
+            <div className="text-[10px] sm:text-xs text-green-600 mt-0.5 sm:mt-1">
+              Listos
+            </div>
           </button>
         </div>
         <div className="mt-2 sm:mt-3 text-[10px] sm:text-xs text-gray-500 flex items-center gap-2">
           <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-          <span className="hidden sm:inline">Haz clic en cada categoría para ver detalles</span>
+          <span className="hidden sm:inline">
+            Haz clic en cada categoría para ver detalles
+          </span>
           <span className="sm:hidden">Toca para ver detalles</span>
         </div>
       </div>

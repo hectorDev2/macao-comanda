@@ -24,7 +24,10 @@ export default function SidebarPedido() {
     setTimeout(() => setShowSuccess(false), 3000);
   }
 
-  const cartItemsCount = currentCart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartItemsCount = currentCart.reduce(
+    (sum, item) => sum + item.quantity,
+    0
+  );
 
   return (
     <>
@@ -78,7 +81,9 @@ export default function SidebarPedido() {
 
         {/* Contenido */}
         <div className="p-4 lg:p-6 overflow-y-auto flex-1">
-          <h2 className="hidden lg:block text-xl font-semibold mb-4">Pedido Actual</h2>
+          <h2 className="hidden lg:block text-xl font-semibold mb-4">
+            Pedido Actual
+          </h2>
 
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Mesa #</label>

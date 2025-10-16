@@ -169,7 +169,7 @@ export const usePedidosStore = create<PedidosStore>()((set, get) => ({
     }
   },
 
-    // Actualizar estado de un item en Firebase
+  // Actualizar estado de un item en Firebase
   updateItemStatus: async (
     pedidoId: number,
     itemId: number,

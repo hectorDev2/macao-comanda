@@ -6,7 +6,9 @@ import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 
 // Componente para la columna de items pendientes
 const PendientesColumn = React.memo(() => {
-  const itemsPendientes = usePedidosStore((state) => state.getItemsByEstado("pendiente"));
+  const itemsPendientes = usePedidosStore((state) =>
+    state.getItemsByEstado("pendiente")
+  );
   const updateItemStatus = usePedidosStore((state) => state.updateItemStatus);
 
   return (
@@ -22,7 +24,9 @@ const PendientesColumn = React.memo(() => {
       </h2>
       <div className="space-y-2 sm:space-y-3 lg:space-y-4">
         {itemsPendientes.length === 0 ? (
-          <p className="text-yellow-600 text-center py-6 sm:py-8 text-sm sm:text-base">No hay items pendientes</p>
+          <p className="text-yellow-600 text-center py-6 sm:py-8 text-sm sm:text-base">
+            No hay items pendientes
+          </p>
         ) : (
           itemsPendientes.map(({ pedido, item }) => (
             <PedidoItemCard
@@ -40,11 +44,13 @@ const PendientesColumn = React.memo(() => {
   );
 });
 
-PendientesColumn.displayName = 'PendientesColumn';
+PendientesColumn.displayName = "PendientesColumn";
 
 // Componente para la columna de items en preparación
 const PreparandoColumn = React.memo(() => {
-  const itemsPreparando = usePedidosStore((state) => state.getItemsByEstado("preparando"));
+  const itemsPreparando = usePedidosStore((state) =>
+    state.getItemsByEstado("preparando")
+  );
   const updateItemStatus = usePedidosStore((state) => state.updateItemStatus);
 
   return (
@@ -60,7 +66,9 @@ const PreparandoColumn = React.memo(() => {
       </h2>
       <div className="space-y-2 sm:space-y-3 lg:space-y-4">
         {itemsPreparando.length === 0 ? (
-          <p className="text-blue-600 text-center py-6 sm:py-8 text-sm sm:text-base">No hay items en preparación</p>
+          <p className="text-blue-600 text-center py-6 sm:py-8 text-sm sm:text-base">
+            No hay items en preparación
+          </p>
         ) : (
           itemsPreparando.map(({ pedido, item }) => (
             <PedidoItemCard
@@ -78,12 +86,14 @@ const PreparandoColumn = React.memo(() => {
   );
 });
 
-PreparandoColumn.displayName = 'PreparandoColumn';
+PreparandoColumn.displayName = "PreparandoColumn";
 
 // Componente para la columna de items listos
 const ListosColumn = React.memo(() => {
-  const itemsListos = usePedidosStore((state) => state.getItemsByEstado("listo"));
-  const updateItemStatus = usePedidosStore ((state) => state.updateItemStatus);
+  const itemsListos = usePedidosStore((state) =>
+    state.getItemsByEstado("listo")
+  );
+  const updateItemStatus = usePedidosStore((state) => state.updateItemStatus);
 
   return (
     <div className="bg-green-50 rounded-xl p-3 sm:p-4 lg:p-6 border-2 border-green-200">
@@ -98,7 +108,9 @@ const ListosColumn = React.memo(() => {
       </h2>
       <div className="space-y-2 sm:space-y-3 lg:space-y-4">
         {itemsListos.length === 0 ? (
-          <p className="text-green-600 text-center py-6 sm:py-8 text-sm sm:text-base">No hay items listos</p>
+          <p className="text-green-600 text-center py-6 sm:py-8 text-sm sm:text-base">
+            No hay items listos
+          </p>
         ) : (
           itemsListos.map(({ pedido, item }) => (
             <PedidoItemCard
@@ -116,7 +128,7 @@ const ListosColumn = React.memo(() => {
   );
 });
 
-ListosColumn.displayName = 'ListosColumn';
+ListosColumn.displayName = "ListosColumn";
 
 export default function CocinaPage() {
   useRealtimeSync();

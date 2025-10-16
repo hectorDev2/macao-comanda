@@ -81,7 +81,7 @@ export default function MeseroPage() {
           ))}
         </div>
       </div>
-      
+
       {/* Sidebar - Fixed en móvil, static en desktop */}
       <SidebarPedido />
     </div>

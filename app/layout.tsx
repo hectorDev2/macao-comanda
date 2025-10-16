@@ -5,7 +5,8 @@ import NotificationCenter from "@/components/NotificationCenter";
 
 export const metadata = {
   title: "Sistema de Comanda Digital",
-  description: "Sistema de comanda digital en la nube con Firebase y tiempo real",
+  description:
+    "Sistema de comanda digital en la nube con Firebase y tiempo real",
   viewport: {
     width: "device-width",
     initialScale: 1,
