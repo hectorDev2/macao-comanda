@@ -20,7 +20,7 @@ body{
 }
 
 .navbar{
-  @apply bg-white/80 backdrop-blur-sm border-b border-gray-100;
+  @apply bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm;
 }
 
 /* Ocultar scrollbar pero mantener funcionalidad */

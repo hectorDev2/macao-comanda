@@ -154,11 +154,16 @@ export default function CocinaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 -m-3 sm:-m-4 p-3 sm:p-6">
+    <div className="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen p-3 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-4 sm:mb-8 flex items-center gap-2 sm:gap-3">
-          👨‍🍳 <span>Panel de Cocina</span>
-        </h1>
+        <div className="mb-4 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 flex items-center gap-2">
+            👨‍🍳 <span>Panel de Cocina</span>
+          </h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Gestiona los pedidos en tiempo real
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           <PendientesColumn />

@@ -31,7 +31,7 @@ export default function RootLayout({
       <body>
         <Navbar />
         <NotificationCenter />
-        <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 pt-[72px]">
           {children}
         </main>
       </body>

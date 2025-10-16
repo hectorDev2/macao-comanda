@@ -1093,25 +1093,28 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 p-3 sm:p-6">
+    <div className="bg-gradient-to-br from-purple-50 to-pink-50 min-h-screen p-3 sm:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 flex items-center gap-2 sm:gap-3">
-            👨‍💼 <span>Panel de Administración</span>
-          </h1>
+          <div>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 flex items-center gap-2">
+              👨‍💼 <span>Panel de Administración</span>
+            </h1>
+            <p className="text-sm text-gray-600 mt-1">
+              Gestiona pagos y cierra caja
+            </p>
+          </div>
 
           {/* Botón Cerrar Caja */}
           <button
             onClick={() => setMostrarModalCerrarCaja(true)}
             disabled={pagos.length === 0}
-            className="inline-flex items-center gap-2 px-4 sm:px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all shadow-lg active:scale-95 transform"
+            className="inline-flex items-center gap-2 px-4 sm:px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all shadow-lg active:scale-95 transform shrink-0"
           >
             🔒 Cerrar Caja
           </button>
-        </div>
-
+        </div>{" "}
         <ResumenGeneral />
-
         {/* Tabs de navegación */}
         <div className="flex gap-2 mb-6">
           <button
@@ -1135,7 +1138,6 @@ export default function AdminPage() {
             � Historial de Pagos
           </button>
         </div>
-
         {vistaActual === "mesas" ? (
           <>
             <MesasActivas
@@ -1153,7 +1155,6 @@ export default function AdminPage() {
         ) : (
           <HistorialPagos pagos={pagos} />
         )}
-
         {/* Modal de Pago */}
         {mesaACobrar && (
           <ModalPago
@@ -1163,7 +1164,6 @@ export default function AdminPage() {
             onSuccess={handlePagoSuccess}
           />
         )}
-
         {/* Modal de Cerrar Caja */}
         {mostrarModalCerrarCaja && (
           <ModalCerrarCaja

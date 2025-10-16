@@ -26,9 +26,13 @@ export default function LoginPage() {
   return (
     <div className="min-h-[calc(100vh-120px)] flex items-center justify-center px-4">
       <div className="w-full max-w-md card">
-        <h1 className="text-2xl sm:text-3xl font-semibold mb-6 text-center">
-          Iniciar sesión
-        </h1>
+        <div className="flex flex-col items-center mb-6">
+          <img src="/logo.png" alt="Logo" className="w-30 h-20 mb-4" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-warm-600 mb-2">
+            Comanda
+          </h1>
+          <p className="text-sm text-gray-600">Iniciar sesión</p>
+        </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             className="border-2 p-3 sm:p-4 rounded-lg text-base focus:border-warm-500 focus:outline-none transition-colors"

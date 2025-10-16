@@ -76,7 +76,7 @@ export default function MeseroPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-yellow-50">
+    <div className="bg-gradient-to-br from-orange-50 via-white to-yellow-50 min-h-screen">
       <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 p-3 sm:p-4 lg:p-6 max-w-[1920px] mx-auto">
         {/* Contenido principal */}
         <div className="flex-1 min-w-0">
