@@ -276,9 +276,11 @@ export const usePedidosStore = create<PedidosStore>()((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const docRef = doc(db, "pedidos", pedido.firebaseId);
-      
+
       // Filtrar el item que se quiere cancelar
-      const updatedItems = pedido.items.filter((i: PedidoItem) => i.id !== itemId);
+      const updatedItems = pedido.items.filter(
+        (i: PedidoItem) => i.id !== itemId
+      );
 
       // Si no quedan más items, eliminar el pedido completo
       if (updatedItems.length === 0) {
