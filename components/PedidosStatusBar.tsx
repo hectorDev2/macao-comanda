@@ -6,7 +6,7 @@ import { useState } from "react";
 type EstadoType = "pendiente" | "preparando" | "listo" | null;
 
 export default function PedidosStatusBar() {
-  const { getItemsByEstado } = usePedidosStore();
+  const { getItemsByEstado, cancelarItem } = usePedidosStore();
   const [modalOpen, setModalOpen] = useState<EstadoType>(null);
 
   const itemsPendientes = getItemsByEstado("pendiente");
@@ -203,6 +203,24 @@ export default function PedidosStatusBar() {
                         <div className="text-xs text-gray-500 mt-1">
                           S/ {item.price.toFixed(2)} c/u
                         </div>
+
+                        {/* Botón de cancelar solo para items pendientes */}
+                        {modalData.color === "yellow" && (
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              const confirmar = window.confirm(
+                                `¿Seguro que deseas cancelar "${item.name}"?\n\nEsta acción no se puede deshacer.`
+                              );
+                              if (confirmar) {
+                                await cancelarItem(pedido.id, item.id);
+                              }
+                            }}
+                            className="mt-2 w-full bg-red-500 hover:bg-red-600 active:bg-red-700 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors active:scale-95 transform"
+                          >
+                            ❌ Cancelar Item
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}

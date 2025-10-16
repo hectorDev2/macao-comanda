@@ -5,6 +5,7 @@ import {
   addDoc,
   getDocs,
   updateDoc,
+  deleteDoc,
   doc,
   query,
   orderBy,
@@ -48,6 +49,7 @@ interface PedidosStore {
     itemId: number,
     estado: "pendiente" | "preparando" | "listo" | "entregado"
   ) => Promise<void>;
+  cancelarItem: (pedidoId: number, itemId: number) => Promise<void>;
 
   // Métodos de sincronización
   addPedidoFromSocket: (pedido: Pedido) => void;
@@ -238,6 +240,70 @@ export const usePedidosStore = create<PedidosStore>()((set, get) => ({
       set({ error: (error as Error).message, isLoading: false });
       get().addNotification(
         `❌ Error al actualizar estado: ${(error as Error).message}`,
+        "warning"
+      );
+    }
+  },
+
+  // Cancelar un item específico del pedido
+  cancelarItem: async (pedidoId: number, itemId: number) => {
+    const pedido = get().pedidos.find((p: Pedido) => p.id === pedidoId);
+    if (!pedido) {
+      console.error("❌ Pedido no encontrado:", pedidoId);
+      return;
+    }
+
+    const item = pedido.items.find((i: PedidoItem) => i.id === itemId);
+    if (!item) {
+      console.error("❌ Item no encontrado:", itemId);
+      return;
+    }
+
+    // Verificar que el item esté en estado pendiente
+    if (item.estado !== "pendiente") {
+      get().addNotification(
+        `⚠️ Solo se pueden cancelar items pendientes`,
+        "warning"
+      );
+      return;
+    }
+
+    if (!pedido.firebaseId) {
+      console.error("❌ No se encontró el ID de Firebase para el pedido");
+      return;
+    }
+
+    set({ isLoading: true, error: null });
+    try {
+      const docRef = doc(db, "pedidos", pedido.firebaseId);
+      
+      // Filtrar el item que se quiere cancelar
+      const updatedItems = pedido.items.filter((i: PedidoItem) => i.id !== itemId);
+
+      // Si no quedan más items, eliminar el pedido completo
+      if (updatedItems.length === 0) {
+        await deleteDoc(docRef);
+        get().addNotification(
+          `🗑️ Pedido de Mesa ${pedido.mesa} cancelado completamente`,
+          "info"
+        );
+      } else {
+        // Si quedan items, actualizar el pedido
+        await updateDoc(docRef, {
+          items: updatedItems,
+        });
+        get().addNotification(
+          `❌ Item ${item.name} cancelado de Mesa ${pedido.mesa}`,
+          "warning"
+        );
+      }
+
+      set({ isLoading: false });
+    } catch (error) {
+      console.error("❌ Error al cancelar item:", error);
+      set({ error: (error as Error).message, isLoading: false });
+      get().addNotification(
+        `❌ Error al cancelar: ${(error as Error).message}`,
         "warning"
       );
     }
