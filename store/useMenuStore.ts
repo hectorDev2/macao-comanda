@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { MenuCategory } from "@/mock/menuData";
-import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { MenuItem, MenuCategory } from "@/mock/menuData";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 interface MenuStore {
@@ -8,6 +8,7 @@ interface MenuStore {
   isLoading: boolean;
   error: string | null;
   fetchMenu: () => Promise<void>;
+  subscribeToMenu: () => () => void;
 }
 
 export const useMenuStore = create<MenuStore>((set) => ({
@@ -16,54 +17,113 @@ export const useMenuStore = create<MenuStore>((set) => ({
   error: null,
 
   fetchMenu: async () => {
-    console.log("📡 useMenuStore.fetchMenu() - Iniciando...");
+    console.log("📡 useMenuStore.fetchMenu() - Iniciando carga del menú...");
     set({ isLoading: true, error: null });
     try {
       const menuRef = collection(db, "menu");
-      console.log("📡 Obteniendo todos los documentos...");
-
-      // Simplificado: obtener todos los documentos sin filtros complejos
       const querySnapshot = await getDocs(menuRef);
-      console.log("📡 Documentos recibidos:", querySnapshot.size);
 
-      const data: any[] = [];
-      querySnapshot.forEach((doc) => {
-        const docData = { id: doc.id, ...doc.data() };
-        console.log("📄 Doc:", docData);
-        data.push(docData);
-      });
-
-      console.log("📊 Total items:", data.length);
+      console.log(`📡 Total documentos recibidos: ${querySnapshot.size}`);
 
       // Agrupar items por categoría
-      const categoriesMap = new Map<string, any[]>();
-      data.forEach((item: any) => {
-        if (!categoriesMap.has(item.category)) {
-          categoriesMap.set(item.category, []);
+      const categoriesMap = new Map<string, MenuItem[]>();
+
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const category = data.category;
+
+        if (!categoriesMap.has(category)) {
+          categoriesMap.set(category, []);
         }
-        categoriesMap.get(item.category)!.push({
-          id: item.id || Date.now(),
-          name: item.name,
-          price: item.price,
-          image: item.imageUrl || "/placeholder.png",
-          description: item.description || "",
+
+        categoriesMap.get(category)!.push({
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          image: data.image,
+          featured: data.featured || false,
         });
       });
 
-      // Convertir a formato MenuCategory
+      // Convertir a formato MenuCategory[]
       const categories: MenuCategory[] = Array.from(
         categoriesMap.entries()
-      ).map(([name, items]) => ({ name, items }));
+      ).map(([title, items]) => ({
+        title,
+        items,
+      }));
 
       console.log(
-        "✅ Categorías creadas:",
-        categories.length,
-        categories.map((c) => `${c.name} (${c.items.length} items)`)
+        `✅ Menú cargado exitosamente: ${categories.length} categorías`
       );
+      categories.forEach((cat) => {
+        console.log(`   📁 ${cat.title}: ${cat.items.length} items`);
+      });
+
       set({ categories, isLoading: false });
     } catch (error) {
-      console.error("❌ Error al cargar menú:", error);
-      set({ error: (error as Error).message, isLoading: false });
+      console.error("❌ Error al cargar menú desde Firebase:", error);
+      set({
+        error: (error as Error).message,
+        isLoading: false,
+        categories: [],
+      });
     }
+  },
+
+  subscribeToMenu: () => {
+    console.log(
+      "� useMenuStore.subscribeToMenu() - Iniciando suscripción en tiempo real..."
+    );
+
+    const menuRef = collection(db, "menu");
+
+    const unsubscribe = onSnapshot(
+      menuRef,
+      (snapshot) => {
+        console.log(
+          `� Actualización en tiempo real: ${snapshot.size} documentos`
+        );
+
+        // Agrupar items por categoría
+        const categoriesMap = new Map<string, MenuItem[]>();
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const category = data.category;
+
+          if (!categoriesMap.has(category)) {
+            categoriesMap.set(category, []);
+          }
+
+          categoriesMap.get(category)!.push({
+            name: data.name,
+            description: data.description,
+            price: data.price,
+            image: data.image,
+            featured: data.featured || false,
+          });
+        });
+
+        // Convertir a formato MenuCategory[]
+        const categories: MenuCategory[] = Array.from(
+          categoriesMap.entries()
+        ).map(([title, items]) => ({
+          title,
+          items,
+        }));
+
+        console.log(
+          `✅ Menú actualizado en tiempo real: ${categories.length} categorías`
+        );
+        set({ categories, isLoading: false });
+      },
+      (error) => {
+        console.error("❌ Error en suscripción del menú:", error);
+        set({ error: error.message, isLoading: false });
+      }
+    );
+
+    return unsubscribe;
   },
 }));
