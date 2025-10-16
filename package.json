@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed:firebase": "tsx scripts/seedFirebase.ts"
+    "seed:firebase": "tsx scripts/seedFirebase.ts",
+    "seed:menu": "tsx scripts/seedMenu.ts"
   },
   "dependencies": {
     "firebase": "^12.4.0",

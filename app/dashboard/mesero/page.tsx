@@ -37,7 +37,9 @@ export default function MeseroPage() {
 
   const categories = useMenuStore((state) => state.categories);
   const fetchMenu = useMenuStore((state) => state.fetchMenu);
-  const [activeCategory, setActiveCategory] = useState("Entradas");
+  const isLoading = useMenuStore((state) => state.isLoading);
+  const error = useMenuStore((state) => state.error);
+  const [activeCategory, setActiveCategory] = useState("");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -53,7 +55,14 @@ export default function MeseroPage() {
       });
   }, [fetchMenu]);
 
-  const currentCategory = categories.find((c) => c.name === activeCategory);
+  // Establecer la primera categoría cuando el menú se cargue
+  useEffect(() => {
+    if (categories.length > 0 && !activeCategory) {
+      setActiveCategory(categories[0].title);
+    }
+  }, [categories, activeCategory]);
+
+  const currentCategory = categories.find((c) => c.title === activeCategory);
 
   if (!isMounted) {
     return (
@@ -100,18 +109,45 @@ export default function MeseroPage() {
               📋 Categorías del Menú
             </h2>
             <CategoryTabs
-              categories={categories.map((c) => c.name)}
+              categories={categories.map((c) => c.title)}
               active={activeCategory}
               onSelect={setActiveCategory}
             />
           </div>
 
           {/* Grid de items del menú */}
-          {currentCategory ? (
+          {isLoading ? (
+            <div className="col-span-full">
+              <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-200 p-8 sm:p-12 text-center">
+                <div className="text-5xl sm:text-6xl mb-4 animate-bounce">
+                  🍴
+                </div>
+                <p className="text-lg sm:text-xl font-semibold text-gray-600">
+                  Cargando menú...
+                </p>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="col-span-full">
+              <div className="bg-white rounded-2xl shadow-sm border-2 border-red-200 p-8 sm:p-12 text-center">
+                <div className="text-5xl sm:text-6xl mb-4">❌</div>
+                <p className="text-lg sm:text-xl font-semibold text-red-600 mb-2">
+                  Error al cargar menú
+                </p>
+                <p className="text-sm text-gray-500">{error}</p>
+                <button
+                  onClick={() => fetchMenu()}
+                  className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+                >
+                  Reintentar
+                </button>
+              </div>
+            </div>
+          ) : currentCategory ? (
             <>
               <div className="flex items-center justify-between mb-3 px-1">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-800">
-                  {currentCategory.name}
+                  {currentCategory.title}
                 </h3>
                 <span className="text-xs sm:text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
                   {currentCategory.items.length} items
@@ -131,22 +167,28 @@ export default function MeseroPage() {
                     </div>
                   </div>
                 ) : (
-                  currentCategory.items.map((item) => (
-                    <MenuItemCard key={item.id} item={item} />
+                  currentCategory.items.map((item, index) => (
+                    <MenuItemCard key={`${item.name}-${index}`} item={item} />
                   ))
                 )}
               </div>
             </>
-          ) : (
+          ) : categories.length === 0 ? (
             <div className="col-span-full">
-              <div className="bg-white rounded-2xl shadow-sm border-2 border-gray-200 p-8 sm:p-12 text-center">
-                <div className="text-5xl sm:text-6xl mb-4">🍴</div>
-                <p className="text-lg sm:text-xl font-semibold text-gray-600">
-                  Cargando menú...
+              <div className="bg-white rounded-2xl shadow-sm border-2 border-yellow-200 p-8 sm:p-12 text-center">
+                <div className="text-5xl sm:text-6xl mb-4">📋</div>
+                <p className="text-lg sm:text-xl font-semibold text-gray-600 mb-2">
+                  No hay categorías disponibles
                 </p>
+                <p className="text-sm text-gray-500">
+                  Ejecuta el script de migración para cargar el menú
+                </p>
+                <code className="block mt-4 text-xs bg-gray-100 p-3 rounded">
+                  bun run seed:menu
+                </code>
               </div>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Sidebar - Fixed en móvil, static en desktop */}

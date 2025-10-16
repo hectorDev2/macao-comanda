@@ -35,7 +35,7 @@ export default function MenuItemCard({ item }: Props) {
         </span>
         <button
           onClick={() =>
-            addToCart({ id: item.id, name: item.name, price: item.price })
+            addToCart({ id: Date.now(), name: item.name, price: item.price })
           }
           className="bg-warm-500 hover:bg-warm-600 active:bg-warm-700 text-white px-4 py-2.5 rounded-lg transition-colors font-semibold text-sm active:scale-95 transform"
         >
