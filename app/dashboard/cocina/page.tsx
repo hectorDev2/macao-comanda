@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { usePedidosStore } from "@/store/usePedidosStore";
 import PedidoItemCard from "@/components/PedidoItemCard";
 import { useRealtimeSync } from "@/hooks/useRealtimeSync";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Componente para la columna de items pendientes
 const PendientesColumn = React.memo(() => {
@@ -130,7 +131,7 @@ const ListosColumn = React.memo(() => {
 
 ListosColumn.displayName = "ListosColumn";
 
-export default function CocinaPage() {
+function CocinaPageContent() {
   useRealtimeSync();
   const [isMounted, setIsMounted] = useState(false);
 
@@ -172,5 +173,13 @@ export default function CocinaPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CocinaPage() {
+  return (
+    <ProtectedRoute requiredPermission="cocina">
+      <CocinaPageContent />
+    </ProtectedRoute>
   );
 }
