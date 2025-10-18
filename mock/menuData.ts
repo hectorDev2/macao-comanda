@@ -397,6 +397,7 @@ export const menuCategories: MenuCategory[] = [
           "¡El clásico mundial! La gaseosa más famosa del planeta para acompañar tu comida perfectamente.",
         price: 4,
         image: images.cocaCola500,
+        requiresKitchen: false, // No requiere cocina - entrega directa
       },
       {
         name: "Coca Cola 2L",
@@ -404,6 +405,7 @@ export const menuCategories: MenuCategory[] = [
           "¡Coca Cola familiar! Botella grande para compartir esa felicidad burbujeante con todos.",
         price: 15,
         image: images.cocaCola2L,
+        requiresKitchen: false, // No requiere cocina - entrega directa
       },
       {
         name: "Inca Kola 500ml",
@@ -411,6 +413,7 @@ export const menuCategories: MenuCategory[] = [
           "¡Sabor nacional! La gaseosa dorada del Perú que sabe a felicidad y tradición. ¡Orgullo peruano!",
         price: 4,
         image: images.incaKola500,
+        requiresKitchen: false, // No requiere cocina - entrega directa
       },
       {
         name: "Inca Kola 2L",
@@ -418,6 +421,7 @@ export const menuCategories: MenuCategory[] = [
           "¡Inca Kola para toda la familia! Botella grande de nuestro orgullo nacional dorado.",
         price: 15,
         image: images.incaKola2L,
+        requiresKitchen: false, // No requiere cocina - entrega directa
       },
       {
         name: "Fanta 500ml",
@@ -425,6 +429,7 @@ export const menuCategories: MenuCategory[] = [
           "¡Naranja burbujeante! Refrescante gaseosa de naranja que alegra tu comida con su sabor cítrico.",
         price: 4,
         image: images.fanta500,
+        requiresKitchen: false, // No requiere cocina - entrega directa
       },
       {
         name: "Fanta 2L",
@@ -432,6 +437,7 @@ export const menuCategories: MenuCategory[] = [
           "¡Fanta familiar! Botella grande de sabor naranja para compartir la diversión.",
         price: 15,
         image: images.fanta2L,
+        requiresKitchen: false, // No requiere cocina - entrega directa
       },
       {
         name: "Sprite 500ml",
@@ -439,6 +445,7 @@ export const menuCategories: MenuCategory[] = [
           "¡Lima-limón refrescante! Gaseosa cristalina que limpia el paladar y refresca tu experiencia.",
         price: 4,
         image: images.sprite500,
+        requiresKitchen: false, // No requiere cocina - entrega directa
       },
       {
         name: "Sprite 2L",
@@ -446,6 +453,7 @@ export const menuCategories: MenuCategory[] = [
           "¡Sprite familiar! Botella grande de frescura lima-limón para toda la mesa.",
         price: 15,
         image: images.sprite2L,
+        requiresKitchen: false, // No requiere cocina - entrega directa
       },
     ],
   },
