@@ -7,6 +7,7 @@ export interface MenuItem {
   price: number;
   image: string;
   featured?: boolean;
+  requiresKitchen?: boolean; // Indica si requiere preparación en cocina
 }
 
 export interface MenuCategory {
