@@ -1,6 +1,10 @@
 "use client";
 import React, { createContext, useContext, useEffect } from "react";
-import { onAuthStateChanged, signOut, User as FirebaseUser } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signOut,
+  User as FirebaseUser,
+} from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useUserStore, User, UserRole } from "@/store/useUserStore";
@@ -20,7 +24,9 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [firebaseUser, setFirebaseUser] = React.useState<FirebaseUser | null>(null);
+  const [firebaseUser, setFirebaseUser] = React.useState<FirebaseUser | null>(
+    null
+  );
   const { setUser, setLoading, loading } = useUserStore();
 
   useEffect(() => {
@@ -33,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           // Obtener el rol del usuario desde Firestore
           const userDoc = await getDoc(doc(db, "users", user.uid));
-          
+
           if (userDoc.exists()) {
             const userData = userDoc.data();
             const userWithRole: User = {

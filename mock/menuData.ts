@@ -466,7 +466,6 @@ export const menuCategories: MenuCategory[] = [
           "¡Pureza en botella! Agua mineral natural que hidrata y purifica. Perfecta para acompañar cualquier comida.",
         price: 3,
         image: images.sanLuis,
-        requiresKitchen: false, // No requiere cocina - entrega directa
       },
       {
         name: "San Carlos 500ml",
@@ -474,7 +473,6 @@ export const menuCategories: MenuCategory[] = [
           "¡Hidratación pura! Agua mineral refrescante que complementa perfectamente tu experiencia gastronómica.",
         price: 3,
         image: images.sanCarlos,
-        requiresKitchen: false, // No requiere cocina - entrega directa
       },
       {
         name: "Cielo 500ml",
@@ -482,7 +480,6 @@ export const menuCategories: MenuCategory[] = [
           "¡Frescura celestial! Agua pura y cristalina que calma la sed y limpia el paladar.",
         price: 3,
         image: images.cielo,
-        requiresKitchen: false, // No requiere cocina - entrega directa
       },
     ],
   },
