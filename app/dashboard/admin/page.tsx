@@ -7,6 +7,7 @@ import { useRealtimeSync } from "@/hooks/useRealtimeSync";
 import { Pedido } from "@/mock/pedidosData";
 import { Pago } from "@/mock/pagosData";
 import { useSesionesStore } from "@/store/useSesionesStore";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Modal de Pago
 interface ModalPagoProps {
@@ -1048,7 +1049,7 @@ function DetalleMesa({ mesa, onClose }: any) {
   );
 }
 
-export default function AdminPage() {
+function AdminPageContent() {
   useRealtimeSync();
   const [isMounted, setIsMounted] = useState(false);
   const [selectedMesa, setSelectedMesa] = useState<string | null>(null);
@@ -1174,5 +1175,13 @@ export default function AdminPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <AdminPageContent />
+    </ProtectedRoute>
   );
 }

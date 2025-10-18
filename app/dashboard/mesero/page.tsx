@@ -7,6 +7,7 @@ import CategoryTabs from "@/components/CategoryTabs";
 import SidebarPedido from "@/components/SidebarPedido";
 import PedidosStatusBar from "@/components/PedidosStatusBar";
 import { useRealtimeSync } from "@/hooks/useRealtimeSync";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Componente para la alerta de pedidos listos
 const AlertaPedidosListos = React.memo(() => {
@@ -32,7 +33,7 @@ const AlertaPedidosListos = React.memo(() => {
 
 AlertaPedidosListos.displayName = "AlertaPedidosListos";
 
-export default function MeseroPage() {
+function MeseroPageContent() {
   useRealtimeSync();
 
   const categories = useMenuStore((state) => state.categories);
@@ -195,5 +196,13 @@ export default function MeseroPage() {
         <SidebarPedido />
       </div>
     </div>
+  );
+}
+
+export default function MeseroPage() {
+  return (
+    <ProtectedRoute requiredPermission="mesero">
+      <MeseroPageContent />
+    </ProtectedRoute>
   );
 }
