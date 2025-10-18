@@ -1,106 +1,211 @@
 # 🍽️ Sistema de Comanda Digital
 
-Sistema de comanda digital para restaurantes en la nube, construido con **Next.js 14 (App Router)**, **TypeScript**, **Firebase/Firestore** y **Zustand**.
+Sistema profesional de comanda digital para restaurantes en la nube, construido con **Next.js 14 (App Router)**, **TypeScript**, **Firebase (Auth + Firestore)** y **Zustand**.
 
-## 🚀 Características
+## ✨ Características Principales
 
-- **Backend en la nube**: Toda la data en Firebase Firestore (sin necesidad de servidor propio)
-- **Multi-dispositivo**: Acceso desde cualquier celular/tablet con internet
-- **Tiempo real nativo**: Sincronización instantánea con `onSnapshot` de Firebase
-- **Autenticación simulada** con tres roles: Mesero, Cocina y Admin
-- **Vista Mesero**: Navegar menú por categorías, agregar items al pedido y enviar pedidos
-- **Vista Cocina**: Ver pedidos en tiempo real y actualizar su estado (pendiente → preparando → listo)
-- **Vista Admin**: Gestión de productos del menú
-- **Estado global** manejado con Zustand
-- **Sistema de notificaciones** automáticas
-- **Diseño responsive** con tonos cálidos optimizado para móviles
+### 🔐 Autenticación y Seguridad
+- **Firebase Authentication**: Sistema completo de login con email/password
+- **Control de roles**: Admin, Mesero y Cocina con permisos específicos
+- **Protección de rutas**: Acceso restringido según permisos de usuario
+- **Persistencia de sesión**: Login automático al regresar a la app
+- **Selector de vistas para Admin**: Cambio rápido entre todas las vistas del sistema
+
+### 🔄 Tiempo Real y Sincronización
+- **Backend en la nube**: Firebase Firestore (sin servidor propio)
+- **Multi-dispositivo**: Acceso simultáneo desde celulares/tablets
+- **Sincronización instantánea**: `onSnapshot` de Firebase para actualizaciones en tiempo real
+- **Sistema de notificaciones**: Alertas automáticas de cambios de estado
+
+### 📱 Vistas por Rol
+- **Vista Mesero**: Menú por categorías, carrito de pedidos, envío a cocina, panel de bebidas directas
+- **Vista Cocina**: Gestión de pedidos (pendiente → preparando → listo)
+- **Vista Admin**: Control total - caja, gestión de pagos, cierre de sesión, acceso a todas las vistas
+- **Diseño responsive**: Optimizado para móviles, tablets y desktop
 
 ## 📦 Tecnologías
 
-- Next.js 14 (App Router)
-- TypeScript
-- Firebase 12.4.0 (Firestore Database)
-- TailwindCSS
-- Zustand (estado global)
-- React 18
+### Frontend
+- **Next.js 14** - App Router con Server/Client Components
+- **TypeScript** - Tipado estático
+- **React 18** - Última versión
+- **TailwindCSS** - Estilos utility-first
+- **Zustand** - Estado global ligero con persistencia
 
-## 🛠️ Instalación
+### Backend & Auth
+- **Firebase Authentication** - Sistema de login con email/password
+- **Firestore Database** - Base de datos en tiempo real NoSQL
+- **Firebase Admin SDK** - Gestión de usuarios y roles desde servidor
+
+### DevOps & Tools
+- **Vercel** - Despliegue y hosting
+- **Bun** - Runtime rápido para desarrollo
+- **ESLint & TypeScript** - Linting y type checking
+
+## � Inicio Rápido
+
+### 1️⃣ Instalación
 
 ```bash
-# 1. Instalar dependencias
-npm install
-# o si usas bun:
-bun install
+# Clonar el repositorio
+git clone https://github.com/hectorDev2/macao-comanda.git
+cd macao-comanda
 
-# 2. Configurar variables de entorno
-# Crea un archivo .env en la raíz con tus credenciales de Firebase:
+# Instalar dependencias
+bun install
+```
+
+### 2️⃣ Configurar Firebase
+
+**Opción A: Archivo .env (Recomendado)**
+```bash
+# Copiar el archivo de ejemplo
+cp .env.example .env
+
+# Editar .env con tus credenciales de Firebase
 NEXT_PUBLIC_FIREBASE_API_KEY=tu_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu_proyecto_id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
+```
 
-# 3. Poblar la base de datos con datos iniciales
-npm run seed:firebase
-# o:
-bun run seed:firebase
+**Opción B: Variables en el sistema**
+Ver [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) para despliegue en producción.
 
-# 4. Ejecutar en modo desarrollo
-npm run dev
-# o:
+### 3️⃣ Configurar Base de Datos
+
+```bash
+# Poblar Firestore con el menú
+bun run seed:menu
+```
+
+### 4️⃣ Crear Usuarios (Firebase Auth)
+
+```bash
+# Descargar credenciales de Firebase Admin SDK
+# 1. Firebase Console → Project Settings → Service Accounts
+# 2. Generate New Private Key
+# 3. Guardar como serviceAccountKey.json en la raíz
+
+# Crear usuarios iniciales
+bun run seed:users
+```
+
+### 5️⃣ Ejecutar en Desarrollo
+
+```bash
 bun dev
 ```
 
 Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
-## 🔐 Usuarios de prueba
+## 📚 Guías Completas
 
-| Email | Password | Rol |
-|-------|----------|-----|
-| mesero@local.com | 1234 | Mesero |
-| cocina@local.com | 1234 | Cocina |
-| admin@local.com | 1234 | Admin |
+- [🔐 AUTH_FIREBASE.md](./docs/AUTH_FIREBASE.md) - Sistema de autenticación completo
+- [🔑 SETUP_CREDENTIALS.md](./SETUP_CREDENTIALS.md) - Configurar credenciales paso a paso
+- [⚡ QUICKSTART_AUTH.md](./QUICKSTART_AUTH.md) - Guía rápida de 3 pasos
+- [🚀 VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) - Desplegar en Vercel
 
-## 📁 Estructura del proyecto
+## 🔐 Usuarios de Prueba
+
+Después de ejecutar `bun run seed:users`:
+
+| Email | Password | Rol | Permisos |
+|-------|----------|-----|----------|
+| admin@local.com | 123456 | Admin | **Acceso total**: mesero, cocina, admin, caja, bebidas |
+| mesero@local.com | 123456 | Mesero | Vista mesero y panel de bebidas |
+| cocina@local.com | 123456 | Cocina | Solo vista de cocina |
+
+### 🎛️ Selector de Vistas (Admin)
+
+El usuario admin tiene un **selector en el Navbar** que permite cambiar rápidamente entre:
+- 👨‍💼 Admin (gestión de caja y pagos)
+- 👨‍🍳 Mesero (tomar pedidos)
+- 🔥 Cocina (preparar pedidos)
+
+Esto permite al administrador supervisar todas las áreas sin cambiar de cuenta.
+
+## 📁 Estructura del Proyecto
 
 ```
-/app
- ├─ layout.tsx          # Layout principal con navbar
- ├─ page.tsx            # Página de login
- ├─ globals.css         # Estilos globales
- └─ dashboard/
-     ├─ page.tsx        # Dashboard general
-     ├─ mesero/         # Vista mesero
-     ├─ cocina/         # Vista cocina
-     └─ admin/          # Vista admin
+macao-comanda/
+├── app/                          # Next.js App Router
+│   ├── layout.tsx                # Layout principal con AuthProvider
+│   ├── page.tsx                  # Página de login con Firebase Auth
+│   ├── unauthorized/             # Página de acceso denegado
+│   └── dashboard/
+│       ├── mesero/               # Vista mesero (protegida)
+│       │   ├── page.tsx          # Menú y pedidos
+│       │   └── bebidas/          # Panel de bebidas directas
+│       ├── cocina/               # Vista cocina (protegida)
+│       │   └── page.tsx          # Gestión de pedidos
+│       └── admin/                # Vista admin (protegida - solo admin)
+│           ├── page.tsx          # Control de caja
+│           └── caja/             # Módulo de cierre de caja
+│
+├── components/                   # Componentes reutilizables
+│   ├── Navbar.tsx                # Navbar con selector de vistas (admin)
+│   ├── ProtectedRoute.tsx        # HOC para protección de rutas
+│   ├── NotificationCenter.tsx    # Sistema de notificaciones
+│   ├── PedidosStatusBar.tsx      # Barra de estado global
+│   ├── MenuItemCard.tsx          # Card de item del menú
+│   ├── PedidoCard.tsx            # Card de pedido
+│   ├── CategoryTabs.tsx          # Tabs de categorías
+│   └── SidebarPedido.tsx         # Carrito de pedidos
+│
+├── contexts/                     # Context providers
+│   └── AuthContext.tsx           # Contexto de autenticación Firebase
+│
+├── store/                        # Zustand stores
+│   ├── useUserStore.ts           # Usuario + permisos + persistencia
+│   ├── useMenuStore.ts           # Menú desde Firestore
+│   ├── usePedidosStore.ts        # Pedidos en tiempo real
+│   ├── usePagosStore.ts          # Pagos y caja
+│   └── useSesionesStore.ts       # Sesiones de caja
+│
+├── hooks/                        # Custom hooks
+│   └── useRealtimeSync.ts        # Sincronización tiempo real Firebase
+│
+├── lib/                          # Configuración
+│   └── firebase.ts               # Inicialización Firebase (Auth + Firestore)
+│
+├── scripts/                      # Scripts de utilidad
+│   ├── seedMenu.ts               # Poblar menú en Firestore
+│   └── seedUsers.ts              # Crear usuarios con Firebase Admin SDK
+│
+├── docs/                         # Documentación
+│   ├── AUTH_FIREBASE.md          # Sistema de autenticación
+│   ├── SELECTOR_VISTAS_ADMIN.md  # Selector de vistas
+│   └── ...                       # Más guías
+│
+├── .env                          # Variables de entorno (no subir a Git)
+├── .env.example                  # Plantilla de variables
+├── serviceAccountKey.json        # Credenciales Admin SDK (no subir)
+├── vercel.json                   # Configuración de Vercel
+└── package.json                  # Dependencias y scripts
+```
 
-/components
- ├─ Navbar.tsx              # Navbar con info de usuario y logout
- ├─ NotificationCenter.tsx  # Sistema de notificaciones en tiempo real
- ├─ PedidosStatusBar.tsx    # Barra de estado de pedidos
- ├─ MenuItemCard.tsx        # Card de item del menú
- ├─ PedidoCard.tsx          # Card de pedido con cambio de estado
- ├─ CategoryTabs.tsx        # Tabs de categorías
- └─ SidebarPedido.tsx       # Sidebar con pedido actual
+## 🏗️ Arquitectura del Sistema
 
-/store
- ├─ useUserStore.ts     # Store de usuario (con logout)
- ├─ useMenuStore.ts     # Store del menú (lectura desde Firestore)
- └─ usePedidosStore.ts  # Store de pedidos (escritura/lectura Firestore)
+### 🔐 Capa de Autenticación
+```
+Usuario → Firebase Auth → AuthContext → useUserStore → ProtectedRoute
+```
 
-/hooks
- └─ useRealtimeSync.ts  # Hook para sincronización en tiempo real con Firebase
+### 📊 Flujo de Datos
+```
+Firestore (Cloud) ↔ useRealtimeSync ↔ Zustand Stores ↔ React Components
+```
 
-/lib
- └─ firebase.ts         # Inicialización de Firebase (Firestore + Auth)
-
-/scripts
- └─ seedFirebase.ts     # Script para poblar Firestore con datos iniciales
-
-/mock
- ├─ users.ts            # Usuarios mock (para autenticación simulada)
- └─ menuData.ts         # Datos base para seed de Firestore
+### 🎯 Sistema de Permisos
+```typescript
+export const rolePermissions = {
+  mesero: ["mesero", "bebidas"],
+  cocina: ["cocina"],
+  admin: ["mesero", "bebidas", "cocina", "admin", "caja"] // Acceso total
+};
 ```
 
 ## ⚡ Tiempo Real con Firebase
@@ -182,25 +287,38 @@ Firestore Database
 ## �💡 Funcionalidades por Rol
 
 ### 🍽️ Mesero (`/dashboard/mesero`)
-- Ver menú organizado por categorías (Entradas, Platos Fuertes, Bebidas, Postres)
-- Agregar items al carrito con cantidades
-- **Barra de estado en tiempo real** de todos los pedidos
-- **Alerta visual** cuando hay pedidos listos para servir
-- Especificar número de mesa
-- Enviar pedidos a cocina
-- Recibir notificaciones cuando pedidos están listos
+- ✅ Ver menú completo por categorías con imágenes
+- ✅ Carrito de pedidos con cantidades y totales
+- ✅ Barra de estado de todos los pedidos en tiempo real
+- ✅ Alerta visual cuando hay pedidos listos
+- ✅ Panel de bebidas directas (acceso rápido)
+- ✅ Especificar número de mesa
+- ✅ Enviar pedidos a cocina
+- ✅ Notificaciones automáticas de estado
+
+**Acceso protegido**: Solo usuarios con rol `mesero` o `admin`
 
 ### 👨‍🍳 Cocina (`/dashboard/cocina`)
-- Ver pedidos organizados por estado (Pendientes, Preparando, Listos)
-- **Contadores en tiempo real** por cada estado
-- Cambiar estado de pedidos con un clic
-- Ver detalles completos (mesa, items, cantidades, total)
-- Recibir notificaciones de nuevos pedidos automáticamente
+- ✅ Vista organizada por columnas (Pendientes | Preparando | Listos)
+- ✅ Contadores en tiempo real por estado
+- ✅ Cambio de estado con un solo clic
+- ✅ Detalles completos de cada pedido
+- ✅ Vista de items que requieren cocina vs bebidas directas
+- ✅ Notificaciones de nuevos pedidos automáticas
+- ✅ Diseño optimizado para tablets en cocina
+
+**Acceso protegido**: Solo usuarios con rol `cocina` o `admin`
 
 ### 👨‍💼 Admin (`/dashboard/admin`)
-- Ver tabla completa de productos
-- Opciones para editar/eliminar productos
-- Agregar nuevos productos (simulado)
+- ✅ **Control de caja**: Registrar pagos por mesa
+- ✅ **Cierre de caja**: Resumen de ventas por turno/sesión
+- ✅ **Gestión de pagos**: Efectivo, tarjeta, transferencia
+- ✅ **Vista de mesas**: Estado de consumo y cuenta pendiente
+- ✅ **Historial de ventas**: Pagos realizados con filtros
+- ✅ **Selector de vistas**: Cambio rápido entre mesero/cocina/admin
+- ✅ **Acceso total**: Puede entrar a todas las rutas del sistema
+
+**Acceso exclusivo**: Solo usuarios con rol `admin`
 
 ## 🎨 Diseño
 
@@ -209,16 +327,34 @@ Firestore Database
 - Navbar superior con información del usuario
 - Responsive para tablet y desktop
 
-## 🧪 Menú Incluido
+## 🧪 Menú de Ejemplo
 
-El sistema incluye un menú completo con 14 productos distribuidos en 4 categorías:
+El sistema incluye un menú completo con categorías variadas:
+- **Entradas, Platos Fuertes, Bebidas, Postres**
+- **Parrilla, Cortes Premium, Alitas, Pastas, Pollos**
+- **Bebidas Calientes, Cervezas, Cocteles, Vinos**
 
-- **Entradas** (3 items): Ensalada César, Sopa del día, Tequeños
-- **Platos Fuertes** (4 items): Lomo Saltado, Pasta Alfredo, Pollo a la Parrilla, Arroz con Mariscos
-- **Bebidas** (4 items): Limonada, Chicha Morada, Jugo de Naranja, Café Americano
-- **Postres** (3 items): Torta de Chocolate, Helado Artesanal, Flan Casero
+Cada item incluye:
+- Nombre, categoría, precio
+- Descripción detallada
+- Imagen (desde `/public/images/`)
+- Flag `requiresKitchen` (true/false para bebidas directas)
 
-Cada producto incluye: nombre, precio, descripción e imagen de ejemplo.
+## 📜 Scripts Disponibles
+
+```bash
+# Desarrollo
+bun dev              # Iniciar servidor de desarrollo
+bun build            # Build de producción
+bun start            # Iniciar servidor de producción
+
+# Configuración inicial
+bun run seed:menu    # Poblar Firestore con menú completo
+bun run seed:users   # Crear usuarios con Firebase Admin SDK
+
+# Linting
+bun lint             # Verificar código con ESLint
+```
 
 ## 📝 Notas Técnicas
 
@@ -279,35 +415,106 @@ useEffect(() => {
 }, []);
 ```
 
-### 🔒 Configuración de Firebase:
+### 🔒 Configuración de Firebase
 
 1. Crear proyecto en [Firebase Console](https://console.firebase.google.com)
-2. Habilitar **Firestore Database**
-3. Configurar reglas de seguridad (modo prueba para desarrollo):
+2. Habilitar **Authentication** (Email/Password)
+3. Habilitar **Firestore Database**
+4. Configurar reglas de seguridad:
+
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Permitir lectura/escritura solo a usuarios autenticados
     match /{document=**} {
-      allow read, write: if true; // Solo para desarrollo
+      allow read, write: if request.auth != null;
     }
   }
 }
 ```
-4. Copiar credenciales al archivo `.env`
-5. Ejecutar seed para poblar datos iniciales: `npm run seed:firebase`
 
-### 🚀 Mejoras Futuras Recomendadas:
+5. Copiar credenciales al archivo `.env`
+6. Ejecutar scripts de seed
 
-- ⏳ Implementar autenticación real con Firebase Auth
-- ⏳ Reglas de seguridad de Firestore por roles
-- ⏳ Paginación en queries de pedidos
-- ⏳ Índices compuestos en Firestore para queries complejas
-- ⏳ Cloud Functions para lógica de negocio (cálculos, validaciones)
-- ⏳ Testing (Jest, React Testing Library, Firebase Emulator)
-- ⏳ PWA para instalación en dispositivos móviles
-- ⏳ Modo offline con Firestore offline persistence
+## 🚀 Despliegue en Vercel
+
+Ver guía completa: [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+
+**Resumen rápido:**
+
+1. Push a GitHub
+2. Conectar repositorio en Vercel
+3. Configurar variables de entorno (las 6 con `NEXT_PUBLIC_`)
+4. Deploy automático ✅
+
+**Variables requeridas en Vercel:**
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+NEXT_PUBLIC_FIREBASE_PROJECT_ID
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+NEXT_PUBLIC_FIREBASE_APP_ID
+```
+
+## 🔐 Seguridad en Producción
+
+- ✅ Reglas de Firestore configuradas para usuarios autenticados
+- ✅ Variables de entorno seguras (no en el código)
+- ✅ `serviceAccountKey.json` en `.gitignore`
+- ✅ Rutas protegidas con `ProtectedRoute`
+- ✅ Verificación de permisos en cada acción
+
+## 🎯 Roadmap
+
+### ✅ Implementado
+- [x] Autenticación con Firebase Auth
+- [x] Control de roles y permisos
+- [x] Protección de rutas
+- [x] Panel de admin con caja
+- [x] Selector de vistas para admin
+- [x] Panel de bebidas directas
+- [x] Cierre de sesión/caja
+- [x] Tiempo real con Firestore
+
+### 🚧 Próximas Mejoras
+- [ ] PWA para instalación en dispositivos móviles
+- [ ] Modo offline con Firestore offline persistence
+- [ ] Reportes y estadísticas avanzadas
+- [ ] Gestión de inventario
+- [ ] Sistema de reservas de mesas
+- [ ] Integración con impresoras térmicas
+- [ ] App móvil nativa (React Native)
+- [ ] Testing automatizado (Jest, Cypress)
+
+## 🤝 Contribuir
+
+Las contribuciones son bienvenidas. Por favor:
+
+1. Fork del proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📝 Documentación Adicional
+
+- [AUTH_FIREBASE.md](./docs/AUTH_FIREBASE.md) - Sistema de autenticación completo
+- [SELECTOR_VISTAS_ADMIN.md](./docs/SELECTOR_VISTAS_ADMIN.md) - Selector de vistas
+- [SETUP_CREDENTIALS.md](./SETUP_CREDENTIALS.md) - Configurar credenciales
+- [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) - Deploy en Vercel
+- [QUICKSTART_AUTH.md](./QUICKSTART_AUTH.md) - Guía rápida
+
+## 📧 Contacto
+
+**Desarrollador**: Hector Dev  
+**Repositorio**: [github.com/hectorDev2/macao-comanda](https://github.com/hectorDev2/macao-comanda)
 
 ## 📄 Licencia
 
-MIT
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+**⭐ Si te gusta este proyecto, dale una estrella en GitHub!**
